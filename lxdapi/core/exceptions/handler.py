@@ -11,10 +11,9 @@ class ErrorSchema(BaseModel):
 
     ok: bool = False
     status_code: int = 500
-    exception_chain: list[str] = ["Exception"]
-    error_code: str = "Exception"
-    error_code_description: str | None = None
     detail: str | None = None
+    error_code: str = "Exception"
+    exception_chain: list[str] = ["Exception"]
 
 
 def register_exception_handler(app: FastAPI) -> None:
@@ -31,9 +30,8 @@ def register_exception_handler(app: FastAPI) -> None:
             status_code=exc.status_code,
             content=ErrorSchema(
                 error_code=exc.__class__.__name__,
-                detail=exc.detail if exc.detail is not None else exc.__class__.__doc__,
+                detail=exc.detail,
                 status_code=exc.status_code,
-                error_code_description=exc.__class__.__doc__,
                 exception_chain=exc.exception_chain,
             ).dict(),
             headers=exc.headers,

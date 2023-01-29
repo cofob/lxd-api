@@ -86,9 +86,10 @@ class AbstractException(Exception, metaclass=ABCMeta):
         #
         # Order is important here, because we want to show the most specific
         # exception first.
-        for class_type in self.__class__.__mro__:
-            if getattr(class_type, "_http_exception", False):
-                self.exception_chain.append(class_type.__class__.__name__)
+        if not self.exception_chain:
+            for class_type in self.__class__.__mro__:
+                if getattr(class_type, "_http_exception", False):
+                    self.exception_chain.append(class_type.__name__)
 
 
 def exception(exception_class: Type[T]) -> Type[T]:
