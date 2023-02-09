@@ -1,5 +1,7 @@
 test.py
 logs.txt
+*.crt
+*.key
 
 # Direnv (Flake)
 .direnv/

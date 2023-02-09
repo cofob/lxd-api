@@ -2,12 +2,17 @@
 import logging
 from os.path import isfile
 
+from aiolxd import LXD
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
 from .core.config import Config
 from .core.exceptions.handler import register_exception_handler
-from .core.middlewares import ConfigMiddleware, DBAsyncSessionMiddleware
+from .core.middlewares import (
+    AioLXDMiddleware,
+    ConfigMiddleware,
+    DBAsyncSessionMiddleware,
+)
 from .routes import router
 
 log = logging.getLogger(__name__)
@@ -52,6 +57,9 @@ class App:
         """Add middlewares and routers to FastAPI application."""
         self.app.include_router(router)
 
+        # lxd
+        self.lxd = LXD.with_async(self.config.LXD_URL, cert=(self.config.LXD_CERT, self.config.LXD_KEY))
+
         # cors middleware
         self.app.add_middleware(
             CORSMiddleware,
@@ -60,9 +68,9 @@ class App:
             allow_methods=["*"],
             allow_headers=["*"],
         )
-        # db session middleware
+        # middlewares
         self.app.add_middleware(DBAsyncSessionMiddleware, config=self.config)
-        # config middleware
         self.app.add_middleware(ConfigMiddleware, config=self.config)
+        self.app.add_middleware(AioLXDMiddleware, lxd=self.lxd)
         # exception handler
         register_exception_handler(self.app)

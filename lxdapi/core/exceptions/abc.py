@@ -82,22 +82,22 @@ class AbstractException(Exception, metaclass=ABCMeta):
         # This is used to determine the exception type in the API response.
         # For example, if the exception is NotFoundException, then the frontend
         # can show a 404 icon. Or if the exception is DomainException, then the
-        # frontend can show a generic error icon.
+        # frontend can show a generic error icon, for example, the globe icon.
         #
         # Order is important here, because we want to show the most specific
         # exception first.
         if not self.exception_chain:
             for class_type in self.__class__.__mro__:
-                if getattr(class_type, "_http_exception", False):
+                if getattr(class_type, "__http_exception__", False):
                     self.exception_chain.append(class_type.__name__)
 
 
 def exception(exception_class: Type[T]) -> Type[T]:
     """Make exception class.
 
-    This decorator is used to set the `_http_exception` attribute to True.
+    This decorator is used to set the `__http_exception__` attribute to True.
     """
-    exception_class._http_exception = True
+    exception_class.__http_exception__ = True
     return exception_class
 
 

@@ -7,11 +7,13 @@ from pydantic import BaseModel
 from sqlalchemy import Column, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..core.database import Base
+
 # БОЛЬШЕ ДЖЕНЕРИКОВ БОГУ ДЖЕНЕРИКОВ
 T = t.TypeVar("T", bound="AbstractModel")
 
 
-class AbstractModel:
+class AbstractModel(Base):
     """Base database model.
 
     It provides the basic methods like save, remove, update, etc.
@@ -19,6 +21,10 @@ class AbstractModel:
 
     Models with one primary key are supported.
     """
+
+    # https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#migration-to-2-0-step-six-add-allow-unmapped-to-explicitly-typed-orm-models
+    __allow_unmapped__ = True
+    __abstract__ = True
 
     def __repr__(self) -> str:
         """Return the representation of the model."""

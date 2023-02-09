@@ -12,6 +12,9 @@ class Config:
 
     DATABASE_URL: str
     SECRET: str
+    LXD_URL: str
+    LXD_CERT: str
+    LXD_KEY: str
     ORIGINS: tuple[str, ...] = ("*",)
 
     @staticmethod
@@ -48,5 +51,8 @@ class Config:
         return cls(
             DATABASE_URL=cls._get_env("DATABASE_URL"),
             SECRET=cls._get_env("SECRET"),
+            LXD_URL=cls._get_env("LXD_URL"),
+            LXD_CERT=cls._get_env("LXD_CERT"),
+            LXD_KEY=cls._get_env("LXD_KEY"),
             ORIGINS=ORIGINS,
         )

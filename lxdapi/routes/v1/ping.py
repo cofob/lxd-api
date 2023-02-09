@@ -6,7 +6,7 @@ from lxdapi.core.exceptions.handler import ErrorSchema
 router = APIRouter(tags=["ping"], prefix="/ping")
 
 
-@router.get("/", response_model=str, responses={500: {"model": ErrorSchema}})
+@router.get("", response_model=str, responses={500: {"model": ErrorSchema}})
 async def ping() -> str:
     """Ping endpoint.
 
