@@ -14,13 +14,11 @@ class AbstractException(Exception, metaclass=ABCMeta):
 
     Example:
     ```
-        @exception
         class MyException(AbstractException):
             status_code = status.HTTP_400_BAD_REQUEST
             detail = "My custom exception"
             headers = {"X-Error": "There goes my error"}
 
-        @exception
         class MyExceptionWithInit(AbstractException):
             def __init__(
                 self,
@@ -33,8 +31,6 @@ class AbstractException(Exception, metaclass=ABCMeta):
                 super().__init__(detail, status_code, headers)
     ```
     """
-
-    _http_exception: bool = False
 
     detail: str | None = None
     status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -88,17 +84,12 @@ class AbstractException(Exception, metaclass=ABCMeta):
         # exception first.
         if not self.exception_chain:
             for class_type in self.__class__.__mro__:
-                if getattr(class_type, "__http_exception__", False):
-                    self.exception_chain.append(class_type.__name__)
-
-
-def exception(exception_class: Type[T]) -> Type[T]:
-    """Make exception class.
-
-    This decorator is used to set the `__http_exception__` attribute to True.
-    """
-    exception_class.__http_exception__ = True
-    return exception_class
+                # Stop when we reach AbstractException.
+                # This is needed because we don't want to include AbstractException and its
+                # parents in the exception chain.
+                if class_type.__name__ == AbstractException.__name__:
+                    break
+                self.exception_chain.append(class_type.__name__)
 
 
 # Define base exceptions for specific HTTP status codes.
@@ -106,70 +97,60 @@ def exception(exception_class: Type[T]) -> Type[T]:
 # Order is important here, please see the comment in AbstractException.__init__.
 
 
-@exception
 class BadRequestException(AbstractException):
     """400 Bad Request."""
 
     status_code = status.HTTP_400_BAD_REQUEST
 
 
-@exception
 class UnauthorizedException(AbstractException):
     """401 Unauthorized."""
 
     status_code = status.HTTP_401_UNAUTHORIZED
 
 
-@exception
 class ForbiddenException(AbstractException):
     """403 Forbidden."""
 
     status_code = status.HTTP_403_FORBIDDEN
 
 
-@exception
 class NotFoundException(AbstractException):
     """404 Not Found."""
 
     status_code = status.HTTP_404_NOT_FOUND
 
 
-@exception
 class MethodNotAllowedException(AbstractException):
     """405 Method Not Allowed."""
 
     status_code = status.HTTP_405_METHOD_NOT_ALLOWED
 
 
-@exception
 class ConflictException(AbstractException):
     """409 Conflict."""
 
     status_code = status.HTTP_409_CONFLICT
 
 
-@exception
 class UnprocessableEntityException(AbstractException):
     """422 Unprocessable Entity."""
 
     status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-@exception
 class InternalServerErrorException(AbstractException):
     """500 Internal Server Error."""
 
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
-@exception
 class NotImplementedException(AbstractException):
     """501 Not Implemented."""
 
     status_code = status.HTTP_501_NOT_IMPLEMENTED
 
 
-@exception
 class ServiceUnavailableException(AbstractException):
     """503 Service Unavailable."""
 

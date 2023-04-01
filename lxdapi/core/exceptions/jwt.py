@@ -1,9 +1,8 @@
 """JWT-related exceptions."""
 
-from .abc import AbstractException, UnprocessableEntityException, exception
+from .abc import AbstractException, UnprocessableEntityException
 
 
-@exception
 class JWTException(AbstractException):
     """Base JWT exception."""
 
