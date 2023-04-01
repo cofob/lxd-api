@@ -16,7 +16,7 @@ def get_db_deprecated(config: Config) -> AsyncSession:
         AsyncSession: Prepared database session.
     """
     engine = create_async_engine(config.DATABASE_URL, future=True)
-    return sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)()
+    return sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)()  # type: ignore
 
 
 def get_db(request: Request) -> AsyncSession:

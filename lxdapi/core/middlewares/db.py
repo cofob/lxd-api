@@ -25,7 +25,7 @@ class DBAsyncSessionMiddleware(BaseHTTPMiddleware):
         """Initialize."""
         super().__init__(app)
         engine = create_async_engine(config.DATABASE_URL)
-        self.async_session_maker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+        self.async_session_maker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)  # type: ignore
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Dispatch."""
