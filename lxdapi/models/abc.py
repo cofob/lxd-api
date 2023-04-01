@@ -50,7 +50,7 @@ class AbstractModel(Base):
 
     def to_dict(self) -> dict[str, t.Any]:
         """Return the dictionary representation of the model."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}  # type: ignore
 
     @classmethod
     def from_dict(cls: t.Type[T], data: dict[str, t.Any]) -> T:
