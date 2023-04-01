@@ -36,7 +36,7 @@ class AbstractModel(Base):
 
     def __eq__(self, other: t.Any) -> bool:
         """Check if the model is equal to another object."""
-        if not isinstance(other, AbstractModel):
+        if not isinstance(other, self.__class__):
             return False
         return self.get_primary_key_value(self) == other.get_primary_key_value(other)
 
@@ -50,7 +50,7 @@ class AbstractModel(Base):
 
     def to_dict(self) -> dict[str, t.Any]:
         """Return the dictionary representation of the model."""
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}  # type: ignore
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     @classmethod
     def from_dict(cls: t.Type[T], data: dict[str, t.Any]) -> T:
