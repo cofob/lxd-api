@@ -95,7 +95,7 @@ class AbstractModel(Base):
     @classmethod
     async def get_list_by_key(
         cls: t.Type[T], db: AsyncSession, key: Column[t.Any], value: t.Any, limit: int = 10, offset: int = 0
-    ) -> list[T]:
+    ) -> t.Sequence[T]:
         """Get a list of models by a key."""
         query = select(cls).filter_by(**{cls._get_column(cls, key): value}).offset(offset).limit(limit)
         return (await db.execute(query)).scalars().all()
@@ -109,7 +109,7 @@ class AbstractModel(Base):
     @classmethod
     async def get_list_by_keys(
         cls: t.Type[T], db: AsyncSession, *, limit: int = 0, offset: int = 0, **kwargs: t.Any
-    ) -> list[T]:
+    ) -> t.Sequence[T]:
         """Get a list of models by multiple keys."""
         query = select(cls).filter_by(**kwargs).offset(offset).limit(limit)
         return (await db.execute(query)).scalars().all()
